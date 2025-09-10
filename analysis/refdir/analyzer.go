@@ -113,6 +113,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 
 		if RefOrder[kind] == Ignore {
 			printer.Info(ref.Pos(), fmt.Sprintf("%s reference %s ignored by options", kind, ref.Name))
+			return
 		}
 
 		if pass.Fset.File(ref.Pos()).Name() != pass.Fset.File(def).Name() {
