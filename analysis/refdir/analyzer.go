@@ -199,6 +199,16 @@ func run(pass *analysis.Pass) (interface{}, error) {
 
 			case *types.Func:
 				def = def.Origin()
+				// Allow direct self-recursion (call to the function we're inside).
+				if funcDecl != nil {
+					curr, ok := pass.TypesInfo.Defs[funcDecl.Name].(*types.Func)
+					if ok && curr != nil && curr.Origin() == def {
+						// For a recursive call, pass.TypesInfo.Uses[node] returns the current function’s object;
+						// comparing its Origin() to the current func’s Origin() lets us detect direct recursion even with generics instantiation.
+						break
+					}
+				}
+
 				if def.Parent() != nil && def.Parent() != def.Pkg().Scope() {
 					printer.Info(node.Pos(), fmt.Sprintf("skipping func ident %s with inner parent scope %s", node.Name, pass.Fset.Position(def.Parent().Pos())))
 				} else {
