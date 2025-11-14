@@ -146,6 +146,10 @@ func run(pass *analysis.Pass) (interface{}, error) {
 		}
 	}
 
+	// Map selector identifiers (the "Sel" in x.Sel) to their selections so we can
+	// distinguish interface method selections from concrete ones.
+	selOfIdent := make(map[*ast.Ident]*types.Selection)
+
 	// State for keeping track of the receiver type.
 	// No need for a stack as method declarations can only be at file scope.
 	var (
@@ -170,6 +174,11 @@ func run(pass *analysis.Pass) (interface{}, error) {
 				return false
 			}
 
+		case *ast.SelectorExpr:
+			if sel := pass.TypesInfo.Selections[node]; sel != nil {
+				selOfIdent[node.Sel] = sel
+			}
+
 		case *ast.FuncDecl:
 			if funcDecl == nil {
 				funcDecl = node
@@ -180,7 +189,14 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			beforeFuncType = false
 
 		case *ast.Ident:
-			switch def := pass.TypesInfo.Uses[node].(type) {
+			// If this ident is a definition or otherwise has no associated use,
+			// skip it to avoid noisy "unexpected ident" messages.
+			obj := pass.TypesInfo.Uses[node]
+			if obj == nil {
+				break
+			}
+
+			switch def := obj.(type) {
 			case *types.Var:
 				def = def.Origin()
 				if def.IsField() {
@@ -210,6 +226,41 @@ func run(pass *analysis.Pass) (interface{}, error) {
 					}
 				}
 
+				// Handle interface method selections as type references.
+				// If this is a method selection, and the receiver is an interface type,
+				// treat it as a reference to the interface type (not a function).
+				if sel := selOfIdent[node]; sel != nil {
+					recv := sel.Recv()
+					// Unwrap pointers.
+					for {
+						if p, ok := recv.(*types.Pointer); ok {
+							recv = p.Elem()
+							continue
+						}
+						break
+					}
+					handled := false
+					switch rt := recv.(type) {
+					case *types.Named:
+						if _, ok := rt.Underlying().(*types.Interface); ok {
+							// Count this as a type reference to the named interface.
+							check(node, rt.Obj().Pos(), Type)
+							handled = true
+						}
+					case *types.Interface:
+						// Unnamed interface type; nothing to order against at package scope.
+						printer.Info(node.Pos(), fmt.Sprintf("skipping interface method reference %s on unnamed interface type", node.Name))
+						handled = true
+					case *types.TypeParam:
+						// Method selected via a type parameter's interface constraint.
+						printer.Info(node.Pos(), fmt.Sprintf("skipping method reference %s on type parameter %s", node.Name, rt.Obj().Name()))
+						handled = true
+					}
+					if handled {
+						break
+					}
+				}
+
 				if def.Parent() != nil && def.Parent() != def.Pkg().Scope() {
 					printer.Info(node.Pos(), fmt.Sprintf("skipping func ident %s with inner parent scope %s", node.Name, pass.Fset.Position(def.Parent().Pos())))
 				} else {
@@ -217,6 +268,10 @@ func run(pass *analysis.Pass) (interface{}, error) {
 				}
 
 			case *types.TypeName:
+				if def.Pkg() == nil {
+					printer.Info(node.Pos(), fmt.Sprintf("skipping predeclared type %s", node.Name))
+					break
+				}
 				if def.Parent() != def.Pkg().Scope() {
 					printer.Info(node.Pos(), fmt.Sprintf("skipping type ident %s with inner parent scope %s", node.Name, pass.Fset.Position(def.Parent().Pos())))
 					break
@@ -233,6 +288,14 @@ func run(pass *analysis.Pass) (interface{}, error) {
 				}
 				check(node, def.Pos(), Type)
 
+			case *types.Builtin:
+				// Built-in functions like len, make, panic, etc.
+				printer.Info(node.Pos(), fmt.Sprintf("skipping builtin %s", node.Name))
+			case *types.PkgName:
+				// Package qualifier in selectors like fmt.Println.
+				printer.Info(node.Pos(), fmt.Sprintf("skipping package name %s", node.Name))
+			case *types.Label:
+				printer.Info(node.Pos(), fmt.Sprintf("skipping label %s", node.Name))
 			default:
 				printer.Info(node.Pos(), fmt.Sprintf("unexpected ident def type %T for %q", pass.TypesInfo.Uses[node], node.Name))
 			}
