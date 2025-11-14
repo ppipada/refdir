@@ -231,9 +231,11 @@ func run(pass *analysis.Pass) (any, error) {
 				def = def.Origin()
 				switch {
 				case def.IsField():
-					printer.Info(node.Pos(), fmt.Sprintf("skipping var ident %s for field %s", node.Name, pass.Fset.Position(def.Pos())))
+					printer.Info(node.Pos(), fmt.Sprintf("skipping var ident %s for field %s", node.Name,
+						pass.Fset.Position(def.Pos())))
 				case def.Parent() != def.Pkg().Scope():
-					printer.Info(node.Pos(), fmt.Sprintf("skipping var ident %s with inner parent scope %s", node.Name, pass.Fset.Position(def.Parent().Pos())))
+					printer.Info(node.Pos(), fmt.Sprintf("skipping var ident %s with inner parent scope %s", node.Name,
+						pass.Fset.Position(def.Parent().Pos())))
 				default:
 					check(node, def.Pos(), Var)
 				}

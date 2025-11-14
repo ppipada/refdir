@@ -2,14 +2,14 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/ppipada/refdir)](https://goreportcard.com/report/github.com/ppipada/refdir)
 
-This linter is a maintained fork of the [refdir linter by @devnev](https://github.com/devnev/refdir). It has the below bug fixes/enhancements as of 14th Nov 2025:
+This linter is a maintained fork of the [refdir linter by @devnev](https://github.com/devnev/refdir). It has the below bug fixes/enhancements as of November 2025:
 
 - Don't report recursive functions as an issue. Original [issue](https://github.com/devnev/refdir/issues/10) with [PR](https://github.com/devnev/refdir/pull/11)
 - Respect Ignore checks.
 - Interface selections are treated as type references rather than function references. Avoids logical contradiction wrt interface type definition and reference inside same file.
 - Lesser noise for universal scope identifiers.
 - Working `golangci-lint` custom module plugin for version > 2.
-- Stricter `golangci-lint` config compliant code.
+- Chores: Stricter `golangci-lint` config compliant code; `taskfile.dev` tasks; github action integration, vscode settings folders, updated dependencies; improved readme.
 
 **Disclaimer**: false positives; practically this is useful for "exploration" rather than for "enforcement".
 
@@ -96,6 +96,6 @@ refdir ./...
 
 ## Example
 
-![Code graph](./doc/code-dep-viz.png)
+![Code graph](code-dep-viz.png)
 
-![Output example](./doc/output-color.png)
+![Output example](output-color.png)

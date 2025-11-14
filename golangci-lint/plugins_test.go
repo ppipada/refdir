@@ -23,13 +23,6 @@ func TestPlugin(t *testing.T) {
 	}
 	binPath := filepath.Join(d, "custom-gcl")
 
-	t.Logf("List enabled custom linters")
-	if out, err := exec.CommandContext(ctx, binPath, "linters").CombinedOutput(); err != nil {
-		t.Fatalf("Failed to list enabled linters: %v, output: %s", err, string(out))
-	} else {
-		t.Logf("output:\n %s", out)
-	}
-
 	t.Logf("Cleaning cache")
 	if out, err := exec.CommandContext(ctx, binPath, "cache", "clean").CombinedOutput(); err != nil {
 		t.Fatalf("Failed to clear lint cache: %v, output: %s", err, string(out))

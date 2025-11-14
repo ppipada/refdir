@@ -392,21 +392,6 @@ linters:
       # Do not allow non-required aliases.
       no-extra-aliases: true
 
-      # List of aliases
-      alias:
-        - pkg: github.com/ppipada/flexigpt-app/pkg/(\w+)/consts
-          alias: ${1}Consts
-        - pkg: github.com/ppipada/flexigpt-app/pkg/(\w+)/spec
-          alias: ${1}Spec
-        - pkg: github.com/ppipada/flexigpt-app/pkg/(\w+)/store
-          alias: ${1}Store
-        - pkg: github.com/openai/openai-go/v2/shared/constant
-          alias: openaiSharedConstant
-        - pkg: github.com/anthropics/anthropic-sdk-go/shared/constant
-          alias: anthropicSharedConstant
-        - pkg: github.com/ppipada/flexigpt-app/frontend
-          alias: assets
-
     nakedret:
       # No naked returns, ever.
       max-func-lines: 0 # Default: 30

@@ -1,0 +1,63 @@
+{
+  // ============================================
+  // General Editor Settings
+  // ============================================
+  "editor.formatOnSave": true,
+  "editor.rulers": [120],
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "editor.linkedEditing": true,
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+  "search.exclude": {
+    "**/.git": true,
+    "**/.gocache": true,
+    "**/out": true,
+    "**/dist": true,
+    "**/build/bin": true
+  },
+
+  // ============================================
+  // Language-Specific Formatter Overrides
+  // ============================================
+  "[yaml]": {
+    // Note that this wont be used for github workflow yml files as it doesnt support it
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[markdown]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[shellscript]": { "editor.defaultFormatter": "foxundermoon.shell-format" },
+
+  "[go]": {
+    "editor.defaultFormatter": "golang.go",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+
+  // --- Go ---
+  "go.lintTool": "golangci-lint",
+  "go.formatTool": "custom",
+  "go.alternateTools": {
+    "customFormatter": "golangci-lint"
+  },
+  "go.formatFlags": ["fmt", "--stdin"],
+  "go.lintOnSave": "package",
+  "go.testFlags": ["-timeout=30m", "-count=1", "-v"],
+  "go.toolsManagement.autoUpdate": false,
+  "go.addTags": {
+    "transform": "camelcase"
+  },
+
+  // --- Markdown ---
+  "markdown.extension.toc.levels": "2..4",
+  "markdownlint.config": {
+    "MD030": false,
+    "MD033": {
+      "allowed_elements": ["table", "td", "tr", "strong", "details", "summary"]
+    }
+  }
+}
