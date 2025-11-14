@@ -4,7 +4,7 @@ import (
 	"go/token"
 	"sort"
 
-	"github.com/devnev/refdir/analysis/refdir/color"
+	"github.com/ppipada/refdir/analysis/refdir/color"
 	"golang.org/x/tools/go/analysis"
 )
 
@@ -69,7 +69,7 @@ func (c ColorPrinter) Ok(p token.Pos, s string) {
 
 func (c ColorPrinter) Flush() {}
 
-// function call at position
+// Function call at position.
 type pcall struct {
 	p token.Pos
 	f func()

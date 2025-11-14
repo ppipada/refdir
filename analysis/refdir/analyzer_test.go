@@ -15,7 +15,7 @@ func TestAnalyzer_DefaultDirs(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failted to get workdir: %v", err)
 	}
-	analysistest.Run(t, filepath.Join(wd, "testdata/analysistest"), Analyzer, "./defaultdirs/...")
+	analysistest.Run(t, filepath.Join(wd, "testdata", "analysistest"), Analyzer, "./defaultdirs/...")
 }
 
 func TestDefaultRefOrderIsValid(t *testing.T) {

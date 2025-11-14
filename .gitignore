@@ -16,3 +16,5 @@
 
 refdir
 !analysis/refdir
+ignored.txt
+godepgraph.png

@@ -1,0 +1,41 @@
+name: LintTest
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+#
+# Cancel outdated runs for the same branch / PR
+#
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  go:
+    name: Go LintTest
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set-up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          args: --verbose
+          version: v2.6.1
+
+      - name: go-test
+        shell: bash
+        run: go test ./... -v

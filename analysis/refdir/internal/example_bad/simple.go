@@ -1,3 +1,4 @@
+//nolint:gocritic // Skip gocritic for this.
 package example
 
 import "log"

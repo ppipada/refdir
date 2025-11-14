@@ -1,0 +1,46 @@
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+  GREETING: Hello, these are Refdir tasks!
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  cloc:
+    cmds:
+      - |
+        cloc --vcs=git --ignored=ignored.txt \
+             --force-lang=Mustache,tmpl --force-lang=INI,env --force-lang=INI,dev --force-lang=INI,prod \
+             --exclude_ext=yaml,sum,mod,md5 --not-match-f='LICENSE$|\.gitignore$' \
+             .
+
+  godepgraph:
+    cmds:
+      - godepgraph -s -o github.com/ppipada/refdir,command-line-arguments main.go | dot -Tpng -o godepgraph.png
+
+  lint-godotfix:
+    cmds:
+      - golangci-lint run --fix --enable-only=godot
+
+  lint-gosort:
+    cmds:
+      # Use a go get version of this repo.
+      - refdir ./...
+
+  lint:
+    cmds:
+      - golangci-lint run ./... -v
+
+  test:
+    cmds:
+      - go test ./... -v
+
+  lt:
+    cmds:
+      - task: lint
+      - task: test
