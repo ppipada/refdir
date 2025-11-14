@@ -11,55 +11,67 @@ import (
 
 func TestPlugin(t *testing.T) {
 	d := t.TempDir()
-
-	cmd := exec.Command(`sh`, `-c`, `golangci-lint custom && mv custom-gcl "${D}"`)
+	ctx := t.Context()
+	cmd := exec.CommandContext(ctx, `sh`, `-c`, `golangci-lint custom -v && mv custom-gcl "${D}"`)
 	cmd.Dir = "./testdata"
 	cmd.Env = append(os.Environ(), "D="+d)
 	t.Logf("Building custom linter with %q", cmd.Args)
 	if out, err := cmd.CombinedOutput(); err != nil {
 		t.Fatalf("Failed to build custom linter: %v, output: %s", err, string(out))
+	} else {
+		t.Logf("output:\n %s", out)
 	}
 	binPath := filepath.Join(d, "custom-gcl")
 
+	t.Logf("List enabled custom linters")
+	if out, err := exec.CommandContext(ctx, binPath, "linters").CombinedOutput(); err != nil {
+		t.Fatalf("Failed to list enabled linters: %v, output: %s", err, string(out))
+	} else {
+		t.Logf("output:\n %s", out)
+	}
+
 	t.Logf("Cleaning cache")
-	if out, err := exec.Command(binPath, "cache", "clean").CombinedOutput(); err != nil {
+	if out, err := exec.CommandContext(ctx, binPath, "cache", "clean").CombinedOutput(); err != nil {
 		t.Fatalf("Failed to clear lint cache: %v, output: %s", err, string(out))
 	}
 
-	// Should succeed
-
+	// Should succeed.
 	t.Logf("Running pass checks")
-
-	cmd = exec.Command(binPath, "run", "--config=testdata/.golangci-default.yml", "../analysis/refdir/internal/example_default_good")
+	cmd = exec.CommandContext(ctx, binPath, "run", "--config=testdata/.golangci-default.yml",
+		"../analysis/refdir/internal/example_default_good")
 	if _, err := cmd.Output(); err != nil {
 		t.Errorf("Custom linter failed on default example with default config: %s", fmtExitError(err))
 	}
 
-	cmd = exec.Command(binPath, "run", "--config=testdata/.golangci-funcup.yml", "../analysis/refdir/internal/example_funcup_good")
+	cmd = exec.CommandContext(ctx, binPath, "run", "--config=testdata/.golangci-funcup.yml",
+		"../analysis/refdir/internal/example_funcup_good")
 	if _, err := cmd.Output(); err != nil {
 		t.Errorf("Expected custom linter to fail on funcup example with funcup config, got %s", fmtExitError(err))
 	}
 
-	// Should fail
+	// Should fail.
 
 	t.Logf("Running fail checks")
-
-	cmd = exec.Command(binPath, "run", "--config=testdata/.golangci-default.yml", "../analysis/refdir/internal/example_funcup_good")
+	cmd = exec.CommandContext(ctx, binPath, "run", "--config=testdata/.golangci-default.yml",
+		"../analysis/refdir/internal/example_funcup_good")
 	if _, err := cmd.Output(); exitCode(err) != 1 {
 		t.Errorf("Expected custom linter to fail on funcup example with default config, got %s", fmtExitError(err))
 	}
 
-	cmd = exec.Command(binPath, "run", "--config=testdata/.golangci-default.yml", "../analysis/refdir/internal/example_bad")
+	cmd = exec.CommandContext(ctx, binPath, "run", "--config=testdata/.golangci-default.yml",
+		"../analysis/refdir/internal/example_bad")
 	if _, err := cmd.Output(); exitCode(err) != 1 {
 		t.Errorf("Expected custom linter to fail on bad example with default config, got %s", fmtExitError(err))
 	}
 
-	cmd = exec.Command(binPath, "run", "--config=testdata/.golangci-funcup.yml", "../analysis/refdir/internal/example_default_good")
+	cmd = exec.CommandContext(ctx, binPath, "run", "--config=testdata/.golangci-funcup.yml",
+		"../analysis/refdir/internal/example_default_good")
 	if _, err := cmd.Output(); exitCode(err) != 1 {
 		t.Errorf("Custom linter failed on default example with funcup config: %s", fmtExitError(err))
 	}
 
-	cmd = exec.Command(binPath, "run", "--config=testdata/.golangci-funcup.yml", "../analysis/refdir/internal/example_bad")
+	cmd = exec.CommandContext(ctx, binPath, "run", "--config=testdata/.golangci-funcup.yml",
+		"../analysis/refdir/internal/example_bad")
 	if _, err := cmd.Output(); exitCode(err) != 1 {
 		t.Errorf("Expected custom linter to fail on bad example with default config, got %s", fmtExitError(err))
 	}

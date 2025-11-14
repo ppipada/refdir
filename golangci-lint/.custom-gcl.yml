@@ -1,5 +1,5 @@
-version: v1.63.4
+version: v2.6.1
 plugins:
-  - module: github.com/devnev/refdir
-    import: github.com/devnev/refdir/golangci-lint
-    version: v0.6.0
+  - module: github.com/ppipada/refdir
+    import: github.com/ppipada/refdir/golangci-lint
+    version: v0.7.0

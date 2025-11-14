@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/devnev/refdir/analysis/refdir"
 	"github.com/golangci/plugin-module-register/register"
+	"github.com/ppipada/refdir/analysis/refdir"
 	"golang.org/x/tools/go/analysis"
 )
 

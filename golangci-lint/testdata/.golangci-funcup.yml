@@ -1,13 +1,20 @@
-# yaml-language-server: $schema=https://json.schemastore.org/golangci-lint.json
-linters-settings:
-  custom:
-    refdir:
-      type: module
-      settings:
-        directions:
-          func: up
+version: "2"
 
 linters:
-  disable-all: true
+  default: none
   enable:
     - refdir
+  settings:
+    custom:
+      refdir:
+        type: module
+        description: "Report potential reference-to-declaration ordering issues"
+        original-url: "github.com/ppipada/refdir"
+        # All settings are optional.
+        # These example settings correspond to the analyzer defaults.
+        # Possible values are 'up', 'down', and 'ignore'
+        settings:
+          directions:
+            func: up
+            
+
