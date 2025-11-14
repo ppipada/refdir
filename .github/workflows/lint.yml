@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   go:
-    name: Go - lint
+    name: Go LintTest
     runs-on: ubuntu-24.04
 
     steps:
