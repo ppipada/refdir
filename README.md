@@ -9,7 +9,7 @@ This linter is a maintained fork of the [refdir linter by @devnev](https://githu
 - Interface selections are treated as type references rather than function references. Avoids logical contradiction wrt interface type definition and reference inside same file.
 - Lesser noise for universal scope identifiers.
 - Working `golangci-lint` custom module plugin for version > 2.
-- Chores: Stricter `golangci-lint` config compliant code; `taskfile.dev` tasks; github action integration, vscode settings folders, updated dependencies; improved readme.
+- Chores: Stricter `golangci-lint` config compliant code; `taskfile.dev` tasks; github action integration, vscode settings folders, updated and pinned dependencies/tools; improved readme.
 
 **Disclaimer**: false positives; practically this is useful for "exploration" rather than for "enforcement".
 
