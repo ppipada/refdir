@@ -30,6 +30,12 @@ jobs:
         with:
           go-version-file: "go.mod"
 
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          args: --verbose
+          version: v2.6.1
+
       - name: test
         run: |
           go test -covermode=atomic -coverpkg=./... -coverprofile=coverage.out ./...
