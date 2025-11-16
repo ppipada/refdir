@@ -1,6 +1,8 @@
 # Refdir - Go linter that can enforce reference-based ordering of definitions in a _file_
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/ppipada/refdir)](https://goreportcard.com/report/github.com/ppipada/refdir)
+[![lint](https://github.com/ppipada/refdir/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/ppipada/refdir/actions/workflows/lint.yml)
+[![test](https://github.com/ppipada/refdir/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/ppipada/refdir/actions/workflows/test.yml)
 
 This linter is a maintained fork of the [refdir linter by @devnev](https://github.com/devnev/refdir). It has the below bug fixes/enhancements as of November 2025:
 

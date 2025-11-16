@@ -1,4 +1,4 @@
-name: Lint
+name: Test
 
 on:
   push:
@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   go:
-    name: Go - lint
+    name: Go - test
     runs-on: ubuntu-24.04
 
     steps:
@@ -30,8 +30,7 @@ jobs:
         with:
           go-version-file: "go.mod"
 
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v8
-        with:
-          args: --verbose
-          version: v2.6.1
+      - name: test
+        run: |
+          go test -covermode=atomic -coverpkg=./... -coverprofile=coverage.out ./...
+          go tool cover -func=coverage.out
