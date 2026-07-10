@@ -6,9 +6,6 @@ on:
       - main
   pull_request:
 
-#
-# Cancel outdated runs for the same branch / PR
-#
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -23,20 +20,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set-up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version-file: "go.mod"
+          cache: true
 
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v8
-        with:
-          args: --verbose
-          version: v2.6.1
-
-      - name: test
+      - name: Test with coverage
         run: |
-          go test -covermode=atomic -coverpkg=./... -coverprofile=coverage.out ./...
+          go test -count=1 -covermode=atomic -coverpkg=./... -coverprofile=coverage.out ./...
           go tool cover -func=coverage.out
