@@ -28,6 +28,13 @@ jobs:
           go-version-file: "go.mod"
           cache: true
 
+      - name: golangci-lint setup
+        uses: golangci/golangci-lint-action@v9
+        with:
+          args: --verbose
+          version-file: .tool-versions
+          install-mode: "binary"
+
       - name: Test with coverage
         run: |
           go test -count=1 -covermode=atomic -coverpkg=./... -coverprofile=coverage.out ./...
