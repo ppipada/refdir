@@ -241,7 +241,9 @@ func run(pass *analysis.Pass) (any, error) {
 				}
 			case *types.Const:
 				if def.Parent() != def.Pkg().Scope() {
-					printer.Info(node.Pos(), fmt.Sprintf("skipping var ident %s with inner parent scope %s", node.Name, pass.Fset.Position(def.Parent().Pos())))
+					pos := pass.Fset.Position(def.Parent().Pos())
+					i := fmt.Sprintf("skipping var ident %s with inner parent scope %s", node.Name, pos)
+					printer.Info(node.Pos(), i)
 				} else {
 					check(node, def.Pos(), Const)
 				}
@@ -282,11 +284,14 @@ func run(pass *analysis.Pass) (any, error) {
 						}
 					case *types.Interface:
 						// Unnamed interface type; nothing to order against at package scope.
-						printer.Info(node.Pos(), fmt.Sprintf("skipping interface method reference %s on unnamed interface type", node.Name))
+						i := fmt.Sprintf("skipping interface method reference %s on unnamed interface type", node.Name)
+						printer.Info(node.Pos(), i)
 						handled = true
 					case *types.TypeParam:
 						// Method selected via a type parameter's interface constraint.
-						printer.Info(node.Pos(), fmt.Sprintf("skipping method reference %s on type parameter %s", node.Name, rt.Obj().Name()))
+						n := rt.Obj().Name()
+						pos := fmt.Sprintf("skipping method reference %s on type parameter %s", node.Name, n)
+						printer.Info(node.Pos(), pos)
 						handled = true
 					}
 					if handled {
@@ -295,7 +300,9 @@ func run(pass *analysis.Pass) (any, error) {
 				}
 
 				if def.Parent() != nil && def.Parent() != def.Pkg().Scope() {
-					printer.Info(node.Pos(), fmt.Sprintf("skipping func ident %s with inner parent scope %s", node.Name, pass.Fset.Position(def.Parent().Pos())))
+					pos := pass.Fset.Position(def.Parent().Pos())
+					i := fmt.Sprintf("skipping func ident %s with inner parent scope %s", node.Name, pos)
+					printer.Info(node.Pos(), i)
 				} else {
 					check(node, def.Pos(), Func)
 				}
@@ -306,7 +313,9 @@ func run(pass *analysis.Pass) (any, error) {
 					break
 				}
 				if def.Parent() != def.Pkg().Scope() {
-					printer.Info(node.Pos(), fmt.Sprintf("skipping type ident %s with inner parent scope %s", node.Name, pass.Fset.Position(def.Parent().Pos())))
+					pos := pass.Fset.Position(def.Parent().Pos())
+					i := fmt.Sprintf("skipping type ident %s with inner parent scope %s", node.Name, pos)
+					printer.Info(node.Pos(), i)
 					break
 				}
 
@@ -330,7 +339,10 @@ func run(pass *analysis.Pass) (any, error) {
 			case *types.Label:
 				printer.Info(node.Pos(), "skipping label "+node.Name)
 			default:
-				printer.Info(node.Pos(), fmt.Sprintf("unexpected ident def type %T for %q", pass.TypesInfo.Uses[node], node.Name))
+				printer.Info(
+					node.Pos(),
+					fmt.Sprintf("unexpected ident def type %T for %q", pass.TypesInfo.Uses[node], node.Name),
+				)
 			}
 		}
 

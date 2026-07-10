@@ -1,6 +1,5 @@
-# All linters are checked and included either in enable or disable as of v2.6.0 of golangci-lint.
+# All linters are checked and included either in enable or disable as of v2.12.1 of golangci-lint.
 # gofumpt and golines are used as formatters.
-# This is the config file for lint task of this library.
 version: "2"
 run:
   modules-download-mode: readonly
@@ -183,6 +182,9 @@ linters:
     # Checks whether net/http.Header uses canonical header. Most probably good to have but not my use case
     - canonicalheader
 
+    # Clickhouse driver specific.
+    - clickhouselint
+
     # Detects struct containing context.Context field. Not a problem.
     - containedctx
 
@@ -359,6 +361,10 @@ linters:
     - zerologlint
 
   settings:
+    copyloopvar:
+      # Check all assigning the loop variable to another variable.
+      check-alias: true
+
     embeddedstructfieldcheck:
       # Checks that sync.Mutex and sync.RWMutex are not used as embedded fields.
       forbid-mutex: true
@@ -366,6 +372,9 @@ linters:
     errcheck:
       # Report `a := b.(MyStruct)` when `a, ok := ...` should be.
       check-type-assertions: true # Default: false
+
+    exhaustive:
+      default-signifies-exhaustive: true
 
     gocritic:
       # As of golangci-lint v2.0.2 this enabled 102 checks and disables below 4.
@@ -377,6 +386,7 @@ linters:
         - rangeExprCopy
         - rangeValCopy
         - commentedOutCode
+        - tooManyResultsChecker
 
     godot:
       # Comments to be checked: `declarations`, `toplevel`, `noinline` or `all`.
@@ -407,6 +417,43 @@ linters:
       # Doesnt support things like bundleID, can enable and just check for discovery, once in a while.
       # key-naming-case: "camel"
 
+    tagliatelle:
+      case:
+        rules:
+          json: goCamel
+          yaml: goCamel
+          xml: goCamel
+          whatever: goCamel
+        extended-rules:
+          json:
+            case: goCamel
+            extra-initialisms: true
+            initialism-overrides:
+              MS: true
+              MIME: true
+          whatever:
+            case: goCamel
+            extra-initialisms: true
+            initialism-overrides:
+              MS: true
+              MIME: true
+          xml:
+            case: goCamel
+            extra-initialisms: true
+            initialism-overrides:
+              MS: true
+              MIME: true
+        use-field-name: true
+
+    usetesting:
+      os-create-temp: true
+      os-mkdir-temp: true
+      os-setenv: true
+      os-temp-dir: true
+      os-chdir: true
+      context-background: true
+      context-todo: true
+
   exclusions:
     presets:
       - comments
@@ -420,9 +467,13 @@ linters:
       - third_party$
       - builtin$
     rules:
-      - text: '(slog|log)\.\w+'
+      - text: "(slog|log)\\.\\w+"
         linters:
           - noctx
+      - path: '(.+)_test\.go'
+        linters:
+          - goconst
+
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
