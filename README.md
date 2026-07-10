@@ -1,7 +1,6 @@
 # Refdir - Go linter that can enforce reference-based ordering of definitions in a _file_
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
-[![Go Report Card](https://goreportcard.com/badge/github.com/ppipada/refdir)](https://goreportcard.com/report/github.com/ppipada/refdir)
 [![lint](https://github.com/ppipada/refdir/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/ppipada/refdir/actions/workflows/lint.yml)
 [![test](https://github.com/ppipada/refdir/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/ppipada/refdir/actions/workflows/test.yml)
 
@@ -45,45 +44,37 @@ refdir ./...
 - For each reference type (`func`, `type`, `recvtype`, `var`, `const`) there is a flag `--${type}-dir=[up|down|ignore]` to configure the required direction of references of that type.
 
 - Meaning of directions:
-
   - up: use must be after the declaration (declare above use).
   - down: use may be before the declaration (call/use first, define later).
   - ignore: skip checks for that kind.
 
 - Options
-
   - `--func-dir={down|up|ignore}`
-
     - What: References to functions and concrete methods (calls, values).
     - Note: Interface method selections (i.M) are not func refs; they’re treated as Type refs.
     - Default (recommended): down
 
   - `--type-dir={down|up|ignore}`
-
     - What: References to named types (in signatures, conversions, literals, etc.) and interface method selections (i.M).
     - Excludes: The receiver type in a method declaration (that’s RecvType).
     - Default (recommended): up
 
   - `--recvtype-dir={down|up|ignore}`
-
     - What: The receiver type name in a method declaration (the T in func (t T) M()).
     - Counted once per method; other mentions of T inside that method are ignored.
     - Default (recommended): up
 
   - `--var-dir={down|up|ignore}`
-
     - What: References to variables.
     - Excludes: Struct fields and inner-scope vars.
     - Default (recommended): up
 
   - `--const-dir={down|up|ignore}`
-
     - What: References to constants.
     - Excludes: Inner-scope consts.
     - Default (recommended): up
 
   - `--verbose`
-
     - What: Include informational messages (skips, reasons, positions).
     - Default: false
 
